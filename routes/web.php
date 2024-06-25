@@ -4,6 +4,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Demo\DemoController;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +18,6 @@ use App\Http\Controllers\AdminController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-use Illuminate\Support\Facades\Mail;
 
 Route::get('/test-email', function () {
     $details = [
@@ -66,8 +67,13 @@ Route::controller(AdminController::class) -> group(function() {
     Route::get('/admin/logout', 'destroy') -> name('admin.logout');
     Route::get('/admin/login', 'displayLogin') -> name('admin.login');
     Route::get('/admin/register', 'displayRegister') -> name('admin.register');
-    Route::post('/admin/login', 'storeLogin') -> name('admin.login.send');
+    Route::get('/admin/recover', 'displayRecover') -> name('admin.recover');
+    Route::get('/admin/profile', 'profile') -> name('admin.profile');
+    Route::get('/edit/profile', 'editProfile') -> name('edit.profile');
+    Route::post('/store/profile', 'storeProfile') -> name('store.profile');
+    Route::post('/admin/login/send', 'storeLogin') -> name('admin.login.send');
     Route::post('/admin/register/send', 'storeRegister') -> name('admin.register.send');
+    Route::post('/admin/recover/send', 'storeRecover') -> name('admin.recover.send');
 });
 
 Route::middleware('auth')->group(function () {
