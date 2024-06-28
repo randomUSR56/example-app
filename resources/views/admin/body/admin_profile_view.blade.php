@@ -8,7 +8,7 @@
             <div class="col-lg-6">
                 <div class="card"><br><br>
                     <center>
-                        <img class="rounded-circle avatar-xl" src="{{asset('backend/assets/images/small/img-5.jpg')}}" alt="Card image cap">
+                        <img class="rounded-circle avatar-xl" id="profile_image" src="{{ (!empty($adminData->profile_image)) ? url('upload/admin_images/'.$adminData->profile_image) : url('upload/no_image.jpg') }}" alt="Card image cap">
                     </center>
                     <div class="card-body">
                         <h4 class="card-title">Name: {{$adminData -> name}}</h4>
@@ -25,5 +25,9 @@
 
     </div>
 </div>
+
+<script type="text/php">
+
+</script>
 
 @endsection

@@ -26,7 +26,12 @@ class AdminController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        $notification = array(
+            'message' => 'Logged out',
+            'alert-type' => 'warning'
+        );
+
+        return redirect('/login') -> with($notification);
     }
 
     public function profile()
@@ -34,7 +39,7 @@ class AdminController extends Controller
         $id = Auth::user()->id;
         $adminData = User::find($id);
         return view('admin.body.admin_profile_view', compact('adminData'));
-    }
+    }//End method
 
     public function editProfile()
     {
@@ -50,6 +55,64 @@ class AdminController extends Controller
         $data->name = $request->name;
         $data->email = $request->email;
         $data->username = $request->username;
+
+        if ($request->file('profile_image')) {
+            $file = $request -> file('profile_image');
+
+            $fileName = date('YmdHi').$file->getClientOriginalName();
+            $file -> move(public_path('upload/admin_images'), $fileName);
+            $data['profile_image'] = $fileName;
+        }
+        $data->save();
+
+        $notification = array(
+            'message' => 'Admin Profile Updated Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect() -> route('admin.profile') -> with($notification);
+
+    }//End method
+
+    public function changePassword()
+    {
+        return view('admin.body.admin_change_password');
+    }//End method
+
+    public function updatePassword(Request $request)
+    {
+        //dd($request);
+
+        //Validate Data
+        $request -> validate([
+            'old_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        $hashedPassword = Auth::user()->password;
+        if (Hash::check($request -> old_password, $hashedPassword))
+        {
+            //dd(false);
+            $users = User::find(Auth::id());
+            $users -> password = bcrypt($request -> new_password);
+            $users -> save();
+
+            $notification = array(
+                'message' => 'Password Updated Successfully',
+                'alert-type' => 'success'
+            );
+            return redirect() -> back() -> with($notification);
+        }
+        else
+        {
+            //dd(true);
+            $notification = array(
+                'message' => 'Current Password is Invalid',
+                'alert-type' => 'warning'
+            );
+            return redirect() -> back() -> with($notification);
+        }
 
     }//End method
 
@@ -99,7 +162,12 @@ class AdminController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $notification = array(
+            'message' => 'Logged in',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->intended(RouteServiceProvider::HOME)->with($notification);;
     }
 
     public function storeRecover(Request $request): RedirectResponse

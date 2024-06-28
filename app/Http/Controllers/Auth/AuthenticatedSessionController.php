@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -29,7 +30,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $notification = array(
+            'message' => 'Logged in',
+            'alert-type' => 'success'
+        );
+        Log::info('User logged in');
+
+        return redirect()->intended(RouteServiceProvider::HOME)->with($notification);
     }
 
     /**
