@@ -14,6 +14,7 @@ use Illuminate\Validation\Rules;
 use App\Providers\RouteServiceProvider;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\AuthenticationException;
 
 
 class AdminController extends Controller
@@ -109,7 +110,7 @@ class AdminController extends Controller
             //dd(true);
             $notification = array(
                 'message' => 'Current Password is Invalid',
-                'alert-type' => 'warning'
+                'alert-type' => 'error'
             );
             return redirect() -> back() -> with($notification);
         }
@@ -158,16 +159,26 @@ class AdminController extends Controller
 
     public function storeLogin(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $credentials = $request->only('username', 'password');
 
-        $request->session()->regenerate();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        $notification = array(
-            'message' => 'Logged in',
-            'alert-type' => 'success'
-        );
+            $notification = [
+                'message' => 'Logged in successfully',
+                'alert-type' => 'success'
+            ];
 
-        return redirect()->intended(RouteServiceProvider::HOME)->with($notification);;
+            return redirect()->intended(RouteServiceProvider::HOME)->with($notification);
+        } else {
+            $notification = [
+                'message' => 'Failed to log in',
+                'alert-type' => 'error' // Assuming 'error' is the type for failure messages
+            ];
+
+            return redirect()->back()->withInput($request->only('username', 'remember'))->with($notification);
+        }
+
     }
 
     public function storeRecover(Request $request): RedirectResponse

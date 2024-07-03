@@ -7,8 +7,11 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Home\HomeSliderController;
+use App\Http\Controllers\Home\AboutController;
+use App\Models\Portfolio;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Http\Controllers\Home\PortfolioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,4 +97,27 @@ require __DIR__.'/auth.php';
 Route::controller(HomeSliderController::class) -> group(function() {
     Route::get('/home/slide', 'homeSlider') -> name('home.slide');
     Route::post('/update/slider', 'updateSlider') -> name('update.slider');
+});
+
+// All about Page routes
+Route::controller(AboutController::class) -> group(function() {
+    Route::get('/about/page', 'aboutPage') -> name('about.page');
+    Route::post('/update/about', 'updateAbout') -> name('update.about');
+    Route::get('/about', 'homeAbout') -> name('home.about');
+    Route::get('/about/multi/image', 'aboutMultiImage') -> name('about.multi.image');
+    Route::post('/store/multi/image', 'storeMultiImage') -> name('store.multi.image');
+    Route::get('/all/multi/image', 'allMultiImage') -> name('all.multi.image');
+    Route::get('/edit/multi/image/{id}', 'editMultiImage') -> name('edit.multi.image');
+    Route::post('/update/multi/image', 'updateMultiImage') -> name('update.multi.image');
+    Route::get('/delete/multi/image/{id}', 'deleteMultiImage') -> name('delete.multi.image');
+});
+
+Route::controller(PortfolioController::class) -> group(function() {
+    Route::get('/all/portfolio', 'allPortfolio') -> name('all.portfolio');
+    Route::get('/add/portfolio', 'addPortfolio') -> name('add.portfolio');
+    Route::post('/store/portfolio', 'storePortfolio') -> name('store.portfolio');
+    Route::get('/edit/portfolio/{id}', 'editPortfolio') -> name('edit.portfolio');
+    Route::post('/update/portfolio', 'updatePortfolio') -> name('update.portfolio');
+    Route::get('/delete/portfolio/{id}', 'deletePortfolio') -> name('delete.portfolio');
+    Route::get('/portfolio/details/{id}', 'portfolioDetails') -> name('portfolio.details');
 });
